@@ -1,4 +1,3 @@
-
 // Fungsi untuk menampilkan garis pemisah
 void printLine() {
     printf("==========================================\n");
