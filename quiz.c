@@ -144,3 +144,37 @@ void tampilkanPeraturan() {
     getchar();
 }
 
+// Fungsi untuk menjalankan kuis
+void mulaiQuiz() {
+    clearScreen();
+
+    // Data pertanyaan, pilihan, jawaban benar, dan hadiah
+    const char *pertanyaan[5] = {
+        "1. Sawah:padi =...:...\n   A. Gajah:gunung\n   B. Hutan:Pohon\n   C. Pabrik:Mobil\n   D. Daun:Teh",
+        "2. Apa nama jenis kumbang terbesar di dunia? ?\n   A. Gloowall\n   B. GOAT\n   C. Goliath\n   D. Jupiter",
+        "3. Siapa penemu bola lampu?\n   A. Nikola Tesla\n   B. Thomas Edison\n   C. Albert Einstein\n   D. Alexander Graham Bell",
+        "4. 23, 26, 19, 22, 15, 18, ..., ....\n   A. 12 dan 13\n   B. 11 dan 14\n   C. 11 dan 18\n   D. 21 dan 24",
+        "5. Pilihlah kelanjutan pola berikut: A, C, E, G, ...?\n   A. J\n   B. I\n   C. F\n   D. K"
+    };
+
+    const char jawabanBenar[5] = {'B', 'C', 'B', 'B', 'B'};
+    const int hadiah[5] = {1000, 5000, 10000, 25000, 100000};
+    int hadiahAman = 0;
+    int bantuanTersedia = 1;
+
+    char jawab;
+    int i;
+
+    for (i = 0; i < 5; i++) {
+        clearScreen();
+        printLine();
+        printf("PERTANYAAN %d: (Hadiah: $%d)\n", i + 1, hadiah[i]);
+        printf("%s\n", pertanyaan[i]);
+        printLine();
+
+        if (bantuanTersedia) {
+            printf("Ketik 'H' untuk menggunakan bantuan 50:50.\n");
+        }
+        printf("Jawaban Anda: ");
+        scanf(" %c", &jawab); 
+        jawab = toupper(jawab);
