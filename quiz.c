@@ -10,9 +10,8 @@ typedef struct {
 } User;
 
 // Prototipe fungsi login/registrasi
-void registrasiPengguna();
-int loginPengguna();
-void menuLogin();
+void registrasiPengguna(const char *username, const char *password);
+int loginPengguna(const char *username, const char *password);
 
 // Prototipe fungsi kuis
 void clearScreen();
@@ -20,98 +19,51 @@ void printLine();
 void tampilkanPeraturan();
 void mulaiQuiz();
 
-// Fungsi utama
-int main() {
-    int pilihan;
-
-    do {
-        menuLogin();
-        printf("Masukkan pilihan Anda: ");
-        scanf("%d", &pilihan);
-        getchar(); // Menghapus karakter newline dari buffer
-
-        switch (pilihan) {
-            case 1:
-                registrasiPengguna();
-                break;
-            case 2:
-                if (loginPengguna()) {
-                    printf("\nLogin berhasil! Mulai bermain kuis...\n");
-                    getchar(); // Menunggu input sebelum mulai kuis
-                    tampilkanPeraturan();
-                    mulaiQuiz();
-                } else {
-                    printf("Login gagal, coba lagi!\n");
-                }
-                break;
-            case 3:
-                printf("Program selesai, terima kasih!\n");
-                break;
-            default:
-                printf("Pilihan salah, coba lagi!\n");
-        }
-    } while (pilihan != 3);
-
-    return 0;
-}
-
-// Fungsi untuk menampilkan menu login/registrasi
-void menuLogin() {
-    printf("\n=== Sistem Login dan Registrasi ===\n");
-    printf("1. Registrasi\n");
-    printf("2. Login\n");
-    printf("3. Keluar\n");
-}
-
 // Fungsi untuk registrasi pengguna baru
-void registrasiPengguna() {
-    FILE *file = fopen("login.bin", "ab");
+void registrasiPengguna(const char *username, const char *password) {
+    FILE *file = fopen("database/login.bin", "ab");
     if (!file) {
-        perror("Gagal membuka file");
+        printf("Gagal membuka file. Pastikan direktori 'database' sudah ada.\n");
         return;
     }
 
     User penggunaBaru;
-    printf("Masukkan username: ");
-    fgets(penggunaBaru.username, sizeof(penggunaBaru.username), stdin);
-    strtok(penggunaBaru.username, "\n"); // Menghapus karakter newline
-    printf("Masukkan password: ");
-    fgets(penggunaBaru.password, sizeof(penggunaBaru.password), stdin);
-    strtok(penggunaBaru.password, "\n"); // Menghapus karakter newline
+    strncpy(penggunaBaru.username, username, sizeof(penggunaBaru.username) - 1);
+    strncpy(penggunaBaru.password, password, sizeof(penggunaBaru.password) - 1);
 
+    // Menyimpan data pengguna baru ke file
     fwrite(&penggunaBaru, sizeof(User), 1, file);
     fclose(file);
-
-    printf("Registrasi berhasil!\n");
+    printf("Registrasi berhasil! Silakan login dengan username dan password Anda.\n");
 }
 
-// Fungsi untuk login pengguna
-int loginPengguna() {
-    FILE *file = fopen("login.bin", "rb");
+// Fungsi untuk login pengguna menggunakan CLA
+int loginPengguna(const char *username, const char *password) {
+    FILE *file = fopen("database/login.bin", "rb");
     if (!file) {
-        perror("Gagal membuka file");
+        printf("Gagal membuka file. Pastikan file 'database/login.bin' ada.\n");
         return 0;
     }
 
-    char username[50], password[50];
-    printf("Masukkan username: ");
-    fgets(username, sizeof(username), stdin);
-    strtok(username, "\n"); // Menghapus karakter newline
-    printf("Masukkan password: ");
-    fgets(password, sizeof(password), stdin);
-    strtok(password, "\n"); // Menghapus karakter newline
-
     User pengguna;
+    int loginsuccess = 0;
+    // Membaca data dari file dan mencocokkan dengan input
     while (fread(&pengguna, sizeof(User), 1, file)) {
-        if (strcmp(pengguna.username, username) == 0 &&
-            strcmp(pengguna.password, password) == 0) {
-            fclose(file);
-            return 1; // Login berhasil
+        if (strcmp(pengguna.username, username) == 0 && strcmp(pengguna.password, password) == 0) {
+            loginsuccess = 1;
+            break; // Keluar dari loop jika login berhasil
         }
     }
 
     fclose(file);
-    return 0; // Login gagal
+
+    if (loginsuccess) {
+        printf("Login berhasil! Selamat datang, %s.\n", username);
+    } else {
+        printf("Login gagal! Username atau password salah.\n");
+    }
+
+    return loginsuccess;
 }
 
 // Fungsi untuk membersihkan layar
