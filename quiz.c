@@ -163,5 +163,23 @@ void mulaiQuiz() {
         scanf(" %c", &jawab);
         jawab = toupper(jawab);
 
+     // Jika menggunakan bantuan
+        if (jawab == 'H' && bantuanTersedia) {
+            bantuanTersedia = 0; // Bantuan hanya boleh digunakan sekali
+            printf("\nBantuan 50:50 digunakan! Dua opsi salah dihapus.\n");
+            if (jawabanBenar[i] == 'A') {
+                printf("Opsi tersisa: A dan B\n");
+            } else if (jawabanBenar[i] == 'B') {
+                printf("Opsi tersisa: B dan D\n");
+            } else if (jawabanBenar[i] == 'C') {
+                printf("Opsi tersisa: C dan A\n");
+            } else {
+                printf("Opsi tersisa: D dan C\n");
+            }
+            printf("Jawaban Anda: ");
+            scanf(" %c", &jawab);
+            jawab = toupper(jawab);
+        }
+
 
 
