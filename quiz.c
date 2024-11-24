@@ -180,6 +180,29 @@ void mulaiQuiz() {
             scanf(" %c", &jawab);
             jawab = toupper(jawab);
         }
+       // Evaluasi jawaban
+        if (jawab == jawabanBenar[i]) {
+            printf("\nJawaban benar! Anda memenangkan $%d.\n", hadiah[i]);
+            hadiahAman = hadiah[i]; // Hadiah terakhir yang aman
+        } else {
+            printf("\nJawaban salah! Permainan berakhir.\n");
+            break;
+        }
 
+        printf("Tekan ENTER untuk lanjut ke pertanyaan berikutnya...\n");
+        getchar();
+        getchar();
+    }
+
+    clearScreen();
+    printLine();
+    if (i == 5) {
+        printf("Selamat! Anda memenangkan hadiah utama: $%d!\n", hadiah[4]);
+    } else {
+        printf("Anda membawa pulang hadiah aman sebesar: $%d\n", hadiahAman);
+    }
+    printLine();
+    printf("Terima kasih telah bermain!\n");
+}
 
 
