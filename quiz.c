@@ -10,8 +10,9 @@ typedef struct {
 } User;
 
 // Prototipe fungsi login/registrasi
-void registrasiPengguna(const char *username, const char *password);
-int loginPengguna(const char *username, const char *password);
+void registrasiPengguna();
+int loginPengguna();
+void menuLogin();
 
 // Prototipe fungsi kuis
 void clearScreen();
@@ -19,51 +20,83 @@ void printLine();
 void tampilkanPeraturan();
 void mulaiQuiz();
 
+// Fungsi utama
+int main(int argc, char *argv[]) {
+    if (argc == 2) {
+        if (strcmp(argv[1], "-register") == 0) {
+            registrasiPengguna();
+            return 0;
+        } else if (strcmp(argv[1], "-login") == 0) {
+            if (loginPengguna()) {
+                printf("\nLogin berhasil! Mulai bermain kuis...\n");
+                getchar(); // Menunggu input sebelum mulai kuis
+                tampilkanPeraturan();
+                mulaiQuiz();
+            } else {
+                printf("Login gagal, coba lagi!\n");
+            }
+            return 0;
+        } else {
+            printf("Argumen tidak valid. Gunakan -register atau -login\n");
+            return 1;
+        }
+    } else {
+        printf("Tidak ada argumen yang diberikan. Gunakan -register atau -login\n");
+        return 1;
+    }
+
+    return 0;
+}
+
 // Fungsi untuk registrasi pengguna baru
-void registrasiPengguna(const char *username, const char *password) {
-    FILE *file = fopen("database/login.bin", "ab");
+void registrasiPengguna() {
+    FILE *file = fopen("login.bin", "ab");
     if (!file) {
-        printf("Gagal membuka file. Pastikan direktori 'database' sudah ada.\n");
+        perror("Gagal membuka file");
         return;
     }
 
     User penggunaBaru;
-    strncpy(penggunaBaru.username, username, sizeof(penggunaBaru.username) - 1);
-    strncpy(penggunaBaru.password, password, sizeof(penggunaBaru.password) - 1);
+    printf("Masukkan username: ");
+    fgets(penggunaBaru.username, sizeof(penggunaBaru.username), stdin);
+    strtok(penggunaBaru.username, "\n"); // Menghapus karakter newline
+    printf("Masukkan password: ");
+    fgets(penggunaBaru.password, sizeof(penggunaBaru.password), stdin);
+    strtok(penggunaBaru.password, "\n"); // Menghapus karakter newline
 
-    // Menyimpan data pengguna baru ke file
     fwrite(&penggunaBaru, sizeof(User), 1, file);
     fclose(file);
-    printf("Registrasi berhasil! Silakan login dengan username dan password Anda.\n");
+
+    printf("Registrasi berhasil!\n");
 }
 
-// Fungsi untuk login pengguna menggunakan CLA
-int loginPengguna(const char *username, const char *password) {
-    FILE *file = fopen("database/login.bin", "rb");
+// Fungsi untuk login pengguna
+int loginPengguna() {
+    FILE *file = fopen("login.bin", "rb");
     if (!file) {
-        printf("Gagal membuka file. Pastikan file 'database/login.bin' ada.\n");
+        perror("Gagal membuka file");
         return 0;
     }
 
+    char username[50], password[50];
+    printf("Masukkan username: ");
+    fgets(username, sizeof(username), stdin);
+    strtok(username, "\n"); // Menghapus karakter newline
+    printf("Masukkan password: ");
+    fgets(password, sizeof(password), stdin);
+    strtok(password, "\n"); // Menghapus karakter newline
+
     User pengguna;
-    int loginsuccess = 0;
-    // Membaca data dari file dan mencocokkan dengan input
     while (fread(&pengguna, sizeof(User), 1, file)) {
-        if (strcmp(pengguna.username, username) == 0 && strcmp(pengguna.password, password) == 0) {
-            loginsuccess = 1;
-            break; // Keluar dari loop jika login berhasil
+        if (strcmp(pengguna.username, username) == 0 &&
+            strcmp(pengguna.password, password) == 0) {
+            fclose(file);
+            return 1; // Login berhasil
         }
     }
 
     fclose(file);
-
-    if (loginsuccess) {
-        printf("Login berhasil! Selamat datang, %s.\n", username);
-    } else {
-        printf("Login gagal! Username atau password salah.\n");
-    }
-
-    return loginsuccess;
+    return 0; // Login gagal
 }
 
 // Fungsi untuk membersihkan layar
