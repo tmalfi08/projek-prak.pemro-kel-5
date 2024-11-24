@@ -117,13 +117,13 @@ void printLine() {
 void tampilkanPeraturan() {
     clearScreen();
     printLine();
-    printf("           SELAMAT DATANG DI HOLLY WINGS GAME !      \n");
+    printf("           WELCOME TO THE QUIZ GAME!      \n");
     printLine();
     printf("Peraturan:\n");
     printf("1. Jawab setiap pertanyaan dengan memilih A, B, C, atau D.\n");
-    printf("2. Setiap jawaban benar mendapatkan hadiah.\n");
-    printf("3. Jika salah menjawab, permainan berakhir, dan hadiah Anda akan turun.\n");
-    printf("4. Anda memiliki satu bantuan *50:50* untuk menghilangkan dua opsi yang salah.\n");
+    printf("2. Setiap jawaban benar meningkatkan hadiah Anda.\n");
+    printf("3. Jika salah menjawab, permainan berakhir, dan hadiah Anda turun.\n");
+    printf("4. Anda memiliki satu bantuan 50:50 untuk menghilangkan dua opsi salah.\n");
     printLine();
     printf("Tekan ENTER untuk memulai...\n");
     getchar();
